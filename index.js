@@ -43,13 +43,6 @@ let resumePath = "./assets/resume.png"
 let resumeFile = path.resolve(__dirname, `${resumePath}`)
 const resume = await got ("https://github.com/derrickchen03/resume/blob/main/resume.png?raw=true").buffer();
 
-
-
-// const poemFetch = await fetch('https://raw.githubusercontent.com/s-alad/sa1ad/main/poem.txt');
-// const poemText = await poemFetch.text();
-
-// const alphaAudio = await fetch('https://raw.githubusercontent.com/s-alad/sa1ad/main/assets/alpha.mp3');
-
 // =========================================================================================================================
 process.stdin.resume();
 function exitHandler() {
@@ -94,6 +87,30 @@ console.log(card);
 console.log()
 // =========================================================================================================================
 
+async function displayResume() {
+    open('https://github.com/derrickchen03/resume/blob/main/resume.png?raw=true')
+    console.log(await terminalImage.buffer(resume, {width: 40}))
+}
+
+async function openGit() {
+    let x = await Enquirer.prompt({
+        type: "toggle",
+        name: "browser",
+        message: "Opening in browser, continue?\n",
+        default: true
+    });
+
+    if (x.browser === false) {
+        return;
+    }
+
+    console.log("Opening...")
+    await open('https://github.com/derrickchen03');
+    bluebird.delay(4000)
+    console.log("Opened!")
+
+}
+
 async function OpenInBrowser() {
     let x = await Enquirer.prompt({
         type: "toggle",
@@ -108,20 +125,20 @@ async function OpenInBrowser() {
     
     console.log("Opening...")
     await open('mailto:derrick.chen03@gmail.com?body=To%20Derrick,%0A%0A', {wait: false});
-    bluebird.delay(3000)
+    bluebird.delay(4000)
     console.log("Opened!")
     console.log("If that did not work, please retry with clipboard.")
 }
 
 async function CopyToClipboard() {
-    let y = await Enquirer.prompt({
+    let x = await Enquirer.prompt({
         type: "toggle",
         name: "clipboard",
         message: "Copying to clipboard, continue?\n",
         default: true
     });
 
-    if (y.clipboard === false) {
+    if (x.clipboard === false) {
         return;
     }
 
@@ -154,10 +171,15 @@ const options = {
     name: 'actions',
     message: 'select action',
     choices: [
-        {name: "| Resume", value: async () => {console.log("resume");}},
-        {name: "| Github", value: async () => {console.log("github");}},
-        {name: "| Website", value: async () => {console.log("website");}},
-        {name: "| Email Me?", value: async () => {
+        {name: "| Resume", value: async () => {
+            await displayResume();
+        }},
+        {name: "| Github", value: async () => {
+            await openGit();
+        }},
+        {name: "| Website", value: async () => {
+            console.log("Sorry! WIP");}},
+        {name: "| Email Me", value: async () => {
             const emailAnswer = await inquirer.prompt(eOptions);
             await emailHandler(emailAnswer.emailActions);
         }},
